@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/SuperViewer/v15/Server/sqlite3
+/.vs/SuperViewer/v15/.suo
+/.vs
+/SuperViewer/wwwroot/lib
+/SuperViewer/wwwroot/js

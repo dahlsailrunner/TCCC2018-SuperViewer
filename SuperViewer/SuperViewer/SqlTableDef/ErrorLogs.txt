@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[ErrorLogs](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Timestamp] [datetime] NULL,
+	[Product] [nvarchar](max) NULL,
+	[Layer] [nvarchar](max) NULL,
+	[Location] [nvarchar](max) NULL,
+	[Message] [nvarchar](max) NULL,
+	[Hostname] [nvarchar](max) NULL,
+	[UserId] [nvarchar](max) NULL,
+	[UserName] [nvarchar](max) NULL,
+	[Exception] [nvarchar](max) NULL,
+	[ElapsedMilliseconds] [int] NULL,
+	[CorrelationId] [nvarchar](max) NULL,
+	[CustomException] [nvarchar](max) NULL,
+	[AdditionalInfo] [nvarchar](max) NULL,
+ CONSTRAINT [PK_ErrorLogs] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

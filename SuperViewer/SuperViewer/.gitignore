@@ -1,0 +1,7 @@
+.vs
+.vscode
+wwwroot\lib
+wwwroot\js
+bin
+obj
+node_modules

@@ -1,0 +1,130 @@
+﻿@page
+@model Rover.Pages.IndexModel
+@{
+    ViewData["Title"] = "Error Logs";
+}
+
+<div id="mainContainer" style="padding-top:10px;">   
+    <!-- SEARCH CRITERIA -->
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="padding-top: 7px; padding-bottom: 7px;"> 
+            <div class="row">
+                <div id="searchHeading" class="col-xs-2">Search Criteria</div>
+                <div class="col-xs-3 col-xs-offset-3">
+                    <input data-role="dropdownlist"
+                           data-bind="value: selectedEnvironment,
+                                source: availableEnvironments,
+                                events: { change: loadCriteriaOptions } " />
+                </div>
+                <div class="col-xs-2 col-xs-offset-2">
+                    <button class="btn btn-xs btn-info pull-right" data-bind="click: toggleCriteria">Hide Criteria</button>
+                </div>
+            </div>           
+        </div>
+        <div class="panel-body" id="criteriaBody" data-bind="visible: showCriteria">
+            <div class="row">
+                <div class="col-md-2 col-sm-4 form-group">
+                    <label for="hostnameList">HostName</label><i class="fa fa-refresh fa-spin" id="machSpinner" data-bind="visible: loadingMachines" style="margin-left: 15px;"></i>
+                    <select multiple class="form-control" id="hostnameList" style="font-size: 10px;" size="11"
+                            data-bind="source: availableMachines, value: selectedMachines"></select>
+                </div>
+                <div class="col-md-2 col-sm-4 form-group">
+                    <label for="categoryList">Layer</label><i class="fa fa-refresh fa-spin" id="catSpinner" data-bind="visible: loadingLayers" style="margin-left: 15px;"></i>
+                    <select multiple class="form-control" id="LayerNmList" style="font-size: 10px;" size="11"
+                            data-bind="source: availableLayers, value: selectedLayers"></select>
+                </div>
+                <div class="col-md-2 col-sm-4 form-group">
+                    <label for="userList">User</label><i class="fa fa-refresh fa-spin" id="userSpinner" data-bind="visible: loadingUsers" style="margin-left: 15px;"></i>
+                    <select multiple class="form-control" id="userNmList" style="font-size: 10px;" size="11"
+                            data-bind="source: availableUsers, value: selectedUsers"></select>
+                </div>
+                <div class="col-md-3 col-sm-6 form-group">
+                    <label for="beginDt">Begin</label>
+                    <div>
+                        <input id="beginDt" data-role="datetimepicker" data-bind="value: beginDt" />
+                    </div>
+                    <label for="endDt">End</label>
+                    <div>
+                        <input id="endDt" data-role="datetimepicker" data-bind="value: endDt" />
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="includeInformational"
+                                   data-bind="checked: includeInformational"
+                                   style="margin-right: 10px; margin-bottom: -2px;" />
+                            Include Informational Messages
+                        </label>
+                        <label>
+                            <input type="checkbox" id="informationalOnly"
+                                   data-bind="checked: informationalOnly"
+                                   style="margin-right: 10px; margin-bottom: -2px;" />
+                            Informational Messages Only
+                        </label>
+                    </div>
+                    <div class="form-inline">
+                        <span>Show at most </span><input id="limitTo" class="form-control" style="padding-left: 10px; width: 50px;" data-bind="value: limitTo" /><span> entries</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4 form-group">
+                    <label for="likeTxt">Like</label>
+                    <input id="likeTxt" type="text" class="form-control" data-bind="value: likeTxt" />
+                    <div style="padding-top: 25px;">
+                        <label for="notLikeTxt">Not Like</label>
+                        <input id="notLikeTxt" class="form-control" data-bind="value: notLikeTxt" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xs-8 col-xs-offset-2">
+                <button style="width: 100%;" class="btn btn-success btn-sm" data-bind="click: getLogEntries">Hit it!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center" data-bind="visible: performingSearch">
+        <i class="fa fa-refresh fa-spin" id="entrySpinner" style="font-size: 60px; margin-left: 25px;"></i>
+    </div>
+
+    <div class="alert alert-danger" data-bind="visible: isError" style="display: none;"><strong>An error occurred trying to look up log information!</strong>
+        Check out response from the F12 tools.</div>
+    <div class="alert alert-info" data-bind="visible: noEntries" style="display: none;">No matching entries found.</div>
+    <div class="alert alert-info" data-bind="visible: noEnvironment" style="display: none;"><strong>Welcome!</strong>  Choose an environment from the top to get started.</div>
+
+    <!-- LOG ENTRY LISTING -->
+    <div class="list-group"
+         data-template="logEntryTemplate"
+         data-bind="source: logEntries" />
+
+    <!-- SINGLE LOG ENTRY TEMPLATE -->
+    <script type="text/x-kendo-tmpl" id="logEntryTemplate">
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-2 col-sm-5" style="font-size: 12px;">
+                    <span class="label label-warning"><a style="color: white;" href="/?env=#:env#&logId=#:id#">#:id#</a></span>
+                    <br />
+                    <a href="/?env=#:env#&correlationId=#:correlationId#">#:correlationId#</a>
+                </div>
+                <div class="col-md-2 col-sm-3" style="font-size: 10px;">#:timestamp#</div>
+                <div class="col-md-1 col-sm-5" style="font-size: 10px;">#:product# - #:layer#</div>
+                <div class="col-md-3 col-sm-6" style="font-size: 10px;">#:location# </div>
+                <div class="col-md-1 col-sm-4" style="font-size: 10px;">#:userName# (#:userId#)</div>
+                <div class="col-md-2 col-sm-3" style="font-size: 10px;">#:hostname#</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">Message</div>
+                <div class="col-sm-10" style="display:inline-flex">#=message#</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">Exception</div>
+                <div class="col-sm-10" style="font-size: 10px;">#=exception#</div>
+            </div>            
+            <div class="row">
+                <div class="col-sm-2">Additional Info</div>
+                <div class="col-sm-10" style="font-size: 10px;">#=additionalInfo#</div>
+            </div>
+        </div>
+    </script>
+
+</div>
+
+<script src="~/js/index.js"></script>
